@@ -14,7 +14,7 @@ $blockquote-border: $dove-grey !default;
 body {
   margin: 0;
   padding: 0;
-  background: $body-background url("../assets/bkg.png") 0 0;
+  background: $body-background;
   color: $body-foreground;
   font-size: 16px;
   line-height: 1.5;
@@ -155,9 +155,8 @@ pre {
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 10px;
   font-size: 16px;
-  color: #b5e853;
+  color: $conifer;
   border-radius: 2px;
-  text-wrap: normal;
   overflow: auto;
   overflow-y: hidden;
 }
@@ -178,7 +177,7 @@ table {
 
 th {
   text-align: left;
-  border-bottom: 1px dashed #b5e853;
+  border-bottom: 1px dashed $conifer;
   padding: 5px 10px;
 }
 
@@ -189,8 +188,8 @@ td {
 hr {
   height: 0;
   border: 0;
-  border-bottom: 1px dashed #b5e853;
-  color: #b5e853;
+  border-bottom: 1px dashed $conifer;
+  color: $conifer;
 }
 
 /* Buttons
@@ -235,14 +234,14 @@ hr {
 */
 
 a {
-  color: #63c0f5;
-  text-shadow: 0 0 5px rgba(104, 182, 255, 0.5);
+  color: $conifer;
 }
 
 a:active, a:focus {
   outline: 0;
   border: none;
-  -moz-outline-style: none
+  -moz-outline-style: none;
+  outline-style: none;
 }
 
 /* Clearfix */
