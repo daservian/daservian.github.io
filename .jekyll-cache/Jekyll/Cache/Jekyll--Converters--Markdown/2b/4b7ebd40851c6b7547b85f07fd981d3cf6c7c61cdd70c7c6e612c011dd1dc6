@@ -1,0 +1,6 @@
+I"D<h3 id="reconocimiento">Reconocimiento</h3>
+<p>Escaneamos con <strong>nmap</strong>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo nmap -p- -T4 [IP DE LA VÍCTIMA] -oN nmap.txt 
+</code></pre></div></div>
+<p><img src="/images/20220513115055.png" alt="" /></p>
+:ET
